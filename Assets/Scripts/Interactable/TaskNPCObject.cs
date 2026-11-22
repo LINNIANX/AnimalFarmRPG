@@ -12,6 +12,9 @@ public class TaskNPCObject : InteractableObject
     public string[] contentInTaskCompleted;
     public string[] contentInTaskEnd;
 
+    [Header("Audio")]
+    public AudioClip[] talkClips;
+
     private void Start()
     {
         gameTaskSO.state = GameTaskState.Waiting;
@@ -19,13 +22,23 @@ public class TaskNPCObject : InteractableObject
 
     protected override void Interact()
     {
+        PlayTalkSound();
+
         switch (gameTaskSO.state)
         {
             case GameTaskState.Waiting:
                 DialogueUI.Instance.Show(npcName, gameTaskSO.diague, OnDialogueEnd);
                 break;
             case GameTaskState.Executing:
-                DialogueUI.Instance.Show(npcName, contentInTaskExecuting);
+                if (gameTaskSO.IsRequirementMet())
+                {
+                    gameTaskSO.state = GameTaskState.Completed;
+                    DialogueUI.Instance.Show(npcName, contentInTaskCompleted, OnDialogueEnd);
+                }
+                else
+                {
+                    DialogueUI.Instance.Show(npcName, contentInTaskExecuting);
+                }
                 break;
             case GameTaskState.Completed:
                 DialogueUI.Instance.Show(npcName, contentInTaskCompleted, OnDialogueEnd);
@@ -38,6 +51,14 @@ public class TaskNPCObject : InteractableObject
         }
     }
 
+    private void PlayTalkSound()
+    {
+        if (talkClips == null || talkClips.Length == 0) return;
+
+        AudioClip clip = talkClips[UnityEngine.Random.Range(0, talkClips.Length)];
+        if (clip != null) AudioSource.PlayClipAtPoint(clip, transform.position);
+    }
+
     public void OnDialogueEnd()
     {
         switch (gameTaskSO.state)
@@ -45,14 +66,15 @@ public class TaskNPCObject : InteractableObject
             case GameTaskState.Waiting:
                 gameTaskSO.Start();
                 InventoryManager.Instance.AddItem(gameTaskSO.startReward);
-                MessageUI.Instance.Show("你接受了一个任务！");
+                MessageUI.Instance.Show("浣犳帴鍙椾簡涓�涓换鍔★紒");
                 break;
             case GameTaskState.Executing:
                 break;
             case GameTaskState.Completed:
+                gameTaskSO.ConsumeRequirements();
                 gameTaskSO.End();
                 InventoryManager.Instance.AddItem(gameTaskSO.endReward);
-                MessageUI.Instance.Show("任务已提交！");
+                MessageUI.Instance.Show("浠诲姟宸叉彁浜わ紒");
                 break;
             case GameTaskState.End:
                 break;

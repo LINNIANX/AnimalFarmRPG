@@ -23,11 +23,34 @@ public class InventoryManager : MonoBehaviour
         itemList.Add(item);
         InventoryUI.Instance.AddItem(item);
 
-        MessageUI.Instance.Show("你获得了一个：" + item.name);
+        MessageUI.Instance.Show("浣犺幏寰椾簡涓�涓細" + item.name);
     }
     public void RemoveItem(ItemSO itemSO)
     {
         itemList.Remove(itemSO);
+    }
+
+    public int CountItem(ItemSO itemSO)
+    {
+        int count = 0;
+        foreach (ItemSO item in itemList)
+        {
+            if (item == itemSO) count++;
+        }
+        return count;
+    }
+
+    // Used by quest hand-ins: removes the matching inventory entries and their UI slots.
+    public bool RemoveItems(ItemSO itemSO, int count)
+    {
+        if (count <= 0 || CountItem(itemSO) < count) return false;
+
+        for (int i = 0; i < count; i++)
+        {
+            itemList.Remove(itemSO);
+        }
+        InventoryUI.Instance.RemoveItem(itemSO, count);
+        return true;
     }
 
 }

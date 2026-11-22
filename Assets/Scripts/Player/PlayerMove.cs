@@ -6,6 +6,13 @@ using UnityEngine.EventSystems;
 
 public class PlayerMove : MonoBehaviour
 {
+    [Header("Enemy Collision")]
+    [SerializeField] private float searchRadius = 2.5f;
+    [SerializeField] private float maxPushPerFrame = 0.5f;
+
+    private readonly Collider[] overlapHits = new Collider[16];
+    private Collider bodyCollider;
+
     private NavMeshAgent playerAgent;
     private PlayerAttack playerAttack;
     private PlayerProperty playerProperty;
@@ -17,6 +24,7 @@ public class PlayerMove : MonoBehaviour
         playerAttack = GetComponent<PlayerAttack>();
         playerProperty = GetComponent<PlayerProperty>();
         playerAgent.updateRotation = false;
+        bodyCollider = GetComponent<Collider>();
     }
 
     // Update is called once per frame
@@ -25,10 +33,52 @@ public class PlayerMove : MonoBehaviour
         if (IsInputBlocked()) return;
 
         MoveByWASD();
+        ResolveEnemyOverlap();
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             HandleLeftClick();
+        }
+    }
+
+    // NavMeshAgent.Move ignores avoidance, so nothing stops the player walking into
+    // an enemy's collider; this pushes the player back out by the exact penetration.
+    private void ResolveEnemyOverlap()
+    {
+        if (playerAgent == null || !playerAgent.enabled || !playerAgent.isOnNavMesh) return;
+        if (bodyCollider == null) return;
+
+        int count = Physics.OverlapSphereNonAlloc(transform.position, searchRadius,
+            overlapHits, ~0, QueryTriggerInteraction.Ignore);
+
+        Vector3 push = Vector3.zero;
+
+        for (int i = 0; i < count; i++)
+        {
+            Collider other = overlapHits[i];
+            if (other == null || !other.enabled || other.isTrigger || other == bodyCollider) continue;
+            if (other.GetComponentInParent<Enemy>() == null) continue;
+
+            Vector3 direction;
+            float distance;
+            if (!Physics.ComputePenetration(bodyCollider, transform.position, transform.rotation,
+                    other, other.transform.position, other.transform.rotation,
+                    out direction, out distance))
+            {
+                continue;
+            }
+
+            // Keep the correction horizontal so the agent never gets lifted off the ground.
+            direction.y = 0f;
+            float length = direction.magnitude;
+            if (length < 0.0001f) continue;
+
+            push += direction / length * distance;
+        }
+
+        if (push.sqrMagnitude > 0.000001f)
+        {
+            playerAgent.Move(Vector3.ClampMagnitude(push, maxPushPerFrame));
         }
     }
 

@@ -13,6 +13,9 @@ public class PlayerProperty : MonoBehaviour
 
     public const int MaxEnergy = 100;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip hurtClip;
+
     public bool IsDead { get; private set; }
 
     public event Action<int> OnHPChanged;
@@ -52,15 +55,20 @@ public class PlayerProperty : MonoBehaviour
         }
 
         // Starving: an empty stomach costs health instead.
-        TakeDamage(2);
+        TakeDamage(2, false);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, bool playSound = true)
     {
         if (IsDead) return;
 
         hpValue = Mathf.Max(0, hpValue - damage);
         OnHPChanged?.Invoke(hpValue);
+
+        if (playSound && damage > 0 && hurtClip != null)
+        {
+            AudioSource.PlayClipAtPoint(hurtClip, transform.position);
+        }
 
         if (hpValue <= 0)
         {

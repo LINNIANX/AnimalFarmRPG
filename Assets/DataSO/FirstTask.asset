@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 3
   diague:
-  - "\u52C7\u58EB\u4F60\u597D\uFF01"
-  - "\u6211\u4EEC\u6751\u7684\u6751\u6C11\u4E00\u76F4\u53D7\u5230\u9644\u8FD1\u91CE\u72FC\u7684\u56F0\u6270\uFF0C\u4F60\u80FD\u5E2E\u5E2E\u6211\u4EEC\u5417\uFF1F"
-  - "\u5982\u679C\u4F60\u80FD\u5E2E\u6211\u9664\u638910\u53EA\u72FC\u5C31\u592A\u597D\u4E86\u3002"
-  - "\u8FD9\u628A\u9570\u5200\u7ED9\u4F60\uFF0C\u4E5F\u8BB8\u53EF\u4EE5\u5E2E\u5230\u4F60\uFF01"
+  - "\u65E9\u4E0A\u597D\uFF01"
+  - "\u4ECA\u5929\u519C\u573A\u7684\u4EFB\u52A1\u662F\u4E09\u6735\u7F8A\u6BDB\u56E2\u548C\u4E24\u4E2A\u9E21\u817F\uFF0C\u52A0\u6CB9\u5427"
   startReward: {fileID: 11400000, guid: e80bf9d179225e54caf1705f5165b9d3, type: 2}
   endReward: {fileID: 11400000, guid: aa2b7b30d3db61348bf623a8155e0677, type: 2}
-  enemyCountNeed: 3
-  currentEnemyCount: 3
+  requirements:
+  - item: {fileID: 11400000, guid: 973dd92faa04737459049e8156ba2ce2, type: 2}
+    count: 3
+  - item: {fileID: 11400000, guid: b232273834dd9d741aa9cb9b270c3f41, type: 2}
+    count: 2

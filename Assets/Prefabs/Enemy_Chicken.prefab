@@ -177,9 +177,9 @@ MonoBehaviour:
   dropItem: {fileID: 11400000, guid: b232273834dd9d741aa9cb9b270c3f41, type: 2}
   animator: {fileID: 4508142023179194877}
   audioSource: {fileID: 8403974675900218422}
-  hitClip: {fileID: 8300000, guid: 0547b940dba4d964e9e447af1dc0759a, type: 3}
-  attackClip: {fileID: 8300000, guid: 4fb45f9472f5e554c82a5a9c7ba4c739, type: 3}
-  dieClip: {fileID: 8300000, guid: d108e9ae3908d4d479e1e41cca0188a3, type: 3}
+  hitClip: {fileID: 8300000, guid: 30548c8ba8d0d944c9eeb7f280256bff, type: 3}
+  attackClip: {fileID: 0}
+  dieClip: {fileID: 0}
   hitEffectPrefab: {fileID: 8968836366753026499, guid: 4156f03ae8d4371468b18779d64bcde3, type: 3}
   damagePopupPrefab: {fileID: 1321150848928487284, guid: 2a04cd25c90137141a1fc0d5fc3865d9, type: 3}
   hitFlashTime: 0.1

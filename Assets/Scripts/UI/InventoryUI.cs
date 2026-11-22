@@ -65,6 +65,24 @@ public class InventoryUI : MonoBehaviour
         
         itemUI.InitItem(itemSO);
     }
+    public void RemoveItem(ItemSO itemSO, int count)
+    {
+        int removed = 0;
+        foreach (Transform child in content.transform)
+        {
+            if (removed >= count) break;
+
+            ItemUI itemUI = child.GetComponent<ItemUI>();
+            if (itemUI == null || itemUI.itemSO != itemSO) continue;
+
+            // Destroy is deferred to the end of the frame, so hide the slot now or the
+            // next sibling pass would match the same one again.
+            child.gameObject.SetActive(false);
+            Destroy(child.gameObject);
+            removed++;
+        }
+    }
+
     public void OnItemClick(ItemSO itemSO,ItemUI itemUI)
     {
         itemDetailUI.UpdateItemDetailUI(itemSO,itemUI);
