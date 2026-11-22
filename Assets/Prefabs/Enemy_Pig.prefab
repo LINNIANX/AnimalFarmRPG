@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 584330171719704158}
   - component: {fileID: 3458485753648360084}
   - component: {fileID: 8638729610496785851}
+  - component: {fileID: 9134341652061481196}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -106,6 +107,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9134341652061481196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3819050319889435457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3eff699867c6e14e8992ed385fae05b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5102323629227986370
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,6 +132,8 @@ GameObject:
   - component: {fileID: 5837890904329082539}
   - component: {fileID: 541916195180777640}
   - component: {fileID: 5031006152529376616}
+  - component: {fileID: 3945168731853588903}
+  - component: {fileID: 1595277309709232964}
   m_Layer: 0
   m_Name: Enemy_Pig
   m_TagString: Enemy
@@ -283,7 +298,7 @@ MonoBehaviour:
   dropItem: {fileID: 11400000, guid: aa2b7b30d3db61348bf623a8155e0677, type: 2}
   animator: {fileID: 8638729610496785851}
   audioSource: {fileID: 5837890904329082539}
-  hitClip: {fileID: 8300000, guid: 30548c8ba8d0d944c9eeb7f280256bff, type: 3}
+  hitClip: {fileID: 8300000, guid: 5c80078eceedc16489ec6282ef2ad5e0, type: 3}
   attackClip: {fileID: 0}
   dieClip: {fileID: 0}
   hitEffectPrefab: {fileID: 8968836366753026499, guid: 4156f03ae8d4371468b18779d64bcde3, type: 3}
@@ -312,3 +327,34 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.66936374, y: 0.79174894, z: 0.92601115}
   m_Center: {x: 0, y: 0.39587447, z: 0}
+--- !u!114 &3945168731853588903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5102323629227986370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37491770ab3985844bac0ab5828f0b53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alwaysVisible: 0
+  ringColor: {r: 0.85, g: 0.12, b: 0.12, a: 0.85}
+--- !u!114 &1595277309709232964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5102323629227986370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c63f3a7b34086ca498d0c3e41086033c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 1.15
+  height: 0.13
+  heightAbove: 2.3
+  backgroundColor: {r: 0.08, g: 0.08, b: 0.08, a: 0.85}
+  fillColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}

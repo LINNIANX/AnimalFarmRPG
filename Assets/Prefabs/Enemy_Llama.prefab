@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 4543833012785492840}
   - component: {fileID: 548466255048651715}
   - component: {fileID: 8367593083816233970}
+  - component: {fileID: 9072576269738859024}
+  - component: {fileID: 2319575619700549862}
   m_Layer: 0
   m_Name: Enemy_Llama
   m_TagString: Enemy
@@ -177,7 +179,7 @@ MonoBehaviour:
   dropItem: {fileID: 11400000, guid: 973dd92faa04737459049e8156ba2ce2, type: 2}
   animator: {fileID: 6366944413504215685}
   audioSource: {fileID: 4543833012785492840}
-  hitClip: {fileID: 8300000, guid: 30548c8ba8d0d944c9eeb7f280256bff, type: 3}
+  hitClip: {fileID: 8300000, guid: d4633c60e2524d74b9b307910bdfb215, type: 3}
   attackClip: {fileID: 0}
   dieClip: {fileID: 0}
   hitEffectPrefab: {fileID: 8968836366753026499, guid: 4156f03ae8d4371468b18779d64bcde3, type: 3}
@@ -206,6 +208,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.66936374, y: 1.5065403, z: 1.4100304}
   m_Center: {x: 0, y: 0.75327015, z: 0}
+--- !u!114 &9072576269738859024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4892170985807136516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37491770ab3985844bac0ab5828f0b53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alwaysVisible: 0
+  ringColor: {r: 0.85, g: 0.12, b: 0.12, a: 0.85}
+--- !u!114 &2319575619700549862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4892170985807136516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c63f3a7b34086ca498d0c3e41086033c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 1.15
+  height: 0.13
+  heightAbove: 2.3
+  backgroundColor: {r: 0.08, g: 0.08, b: 0.08, a: 0.85}
+  fillColor: {r: 0.85, g: 0.15, b: 0.15, a: 1}
 --- !u!1 &7471648495280456149
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,6 +251,7 @@ GameObject:
   - component: {fileID: 6072535955677548723}
   - component: {fileID: 308697519414556358}
   - component: {fileID: 6366944413504215685}
+  - component: {fileID: 4395185415340708795}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -312,3 +346,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4395185415340708795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471648495280456149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3eff699867c6e14e8992ed385fae05b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

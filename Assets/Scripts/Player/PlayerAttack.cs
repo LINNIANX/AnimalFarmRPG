@@ -72,10 +72,6 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    public void LoadWeapon(Weapon weapon)
-    {
-        this.weapon = weapon;
-    }
     public void LoadWeapon(ItemSO itemSO)
     {
         if (itemSO == null) return;
@@ -113,10 +109,6 @@ public class PlayerAttack : MonoBehaviour
         {
             PlayerPropertyUI.Instance.UpdatePlayerPropertyUI();
         }
-    }
-    public void UnloadWeapon()
-    {
-        weapon = null;
     }
 
 }

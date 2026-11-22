@@ -16,7 +16,6 @@ public class InventoryManager : MonoBehaviour
     }
 
     public List<ItemSO> itemList;
-    public ItemSO defaultWeapon;
 
     public void AddItem(ItemSO item)
     {

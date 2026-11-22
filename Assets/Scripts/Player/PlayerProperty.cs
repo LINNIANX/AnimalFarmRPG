@@ -16,6 +16,14 @@ public class PlayerProperty : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip hurtClip;
 
+    [Header("Feedback")]
+    [SerializeField] private float hitFlashTime = 0.1f;
+    [SerializeField] private GameObject damagePopupPrefab;
+    [SerializeField] private Color damagePopupColor = new Color(1f, 0.35f, 0.35f);
+
+    private Material[] flashMaterials;
+    private Coroutine flashRoutine;
+
     public bool IsDead { get; private set; }
 
     public event Action<int> OnHPChanged;
@@ -36,6 +44,23 @@ public class PlayerProperty : MonoBehaviour
         AddProperty(PropertyType.AttackValue, 20);
 
         EventCenter.OnEnemyDied += OnEnemyDied;
+        CacheFlashMaterials();
+    }
+
+    private void CacheFlashMaterials()
+    {
+        Renderer body = GetComponent<Renderer>();
+        if (body == null) return;
+
+        List<Material> cached = new List<Material>();
+        foreach (Material material in body.materials)
+        {
+            if (material == null || !material.HasProperty("_EmissionColor")) continue;
+            material.EnableKeyword("_EMISSION");
+            material.SetColor("_EmissionColor", Color.black);
+            cached.Add(material);
+        }
+        flashMaterials = cached.ToArray();
     }
 
     private void Update()
@@ -58,16 +83,18 @@ public class PlayerProperty : MonoBehaviour
         TakeDamage(2, false);
     }
 
-    public void TakeDamage(int damage, bool playSound = true)
+    public void TakeDamage(int damage, bool showFeedback = true)
     {
         if (IsDead) return;
 
         hpValue = Mathf.Max(0, hpValue - damage);
         OnHPChanged?.Invoke(hpValue);
 
-        if (playSound && damage > 0 && hurtClip != null)
+        if (showFeedback && damage > 0)
         {
-            AudioSource.PlayClipAtPoint(hurtClip, transform.position);
+            if (hurtClip != null) AudioSource.PlayClipAtPoint(hurtClip, transform.position);
+            PlayHitFlash();
+            SpawnDamagePopup(damage);
         }
 
         if (hpValue <= 0)
@@ -103,25 +130,42 @@ public class PlayerProperty : MonoBehaviour
         propertyDict.TryGetValue(pt, out list);
         list.Add(new Property(pt,value));
     }
-    public void RemoveProperty(PropertyType pt, int value)
+    private void SpawnDamagePopup(int damage)
     {
-        switch (pt)
-        {
-            case PropertyType.HPValue:
-                hpValue = Mathf.Max(0, hpValue - value);
-                OnHPChanged?.Invoke(hpValue);
-                return;
-            case PropertyType.EnergyValue:
-                energyValue = Mathf.Max(0, energyValue - value);
-                OnEnergyChanged?.Invoke(energyValue);
-                return;
-        }
+        if (damagePopupPrefab == null) return;
 
-        List<Property> list;
-        propertyDict.TryGetValue(pt, out list);
-
-        list.Remove(list.Find(x => x.value == value));
+        GameObject popupObject = Instantiate(damagePopupPrefab, transform.position + Vector3.up * 1.7f, Quaternion.identity);
+        DamagePopup popup = popupObject.GetComponent<DamagePopup>();
+        if (popup != null) popup.Initialize(damage, damagePopupColor);
     }
+
+    private void PlayHitFlash()
+    {
+        if (flashMaterials == null || flashMaterials.Length == 0) return;
+
+        if (flashRoutine != null) StopCoroutine(flashRoutine);
+        flashRoutine = StartCoroutine(HitFlashRoutine());
+    }
+
+    private IEnumerator HitFlashRoutine()
+    {
+        SetEmission(Color.white * 2f);
+        yield return new WaitForSecondsRealtime(hitFlashTime);
+        SetEmission(Color.black);
+        flashRoutine = null;
+    }
+
+    private void SetEmission(Color color)
+    {
+        foreach (Material material in flashMaterials)
+        {
+            if (material == null) continue;
+            // Re-enable every time: a fresh material instance can reset the keyword.
+            material.EnableKeyword("_EMISSION");
+            material.SetColor("_EmissionColor", color);
+        }
+    }
+
     private void OnDestroy()
     {
         EventCenter.OnEnemyDied -= OnEnemyDied;

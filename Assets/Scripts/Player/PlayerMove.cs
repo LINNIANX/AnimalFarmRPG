@@ -33,12 +33,21 @@ public class PlayerMove : MonoBehaviour
         if (IsInputBlocked()) return;
 
         MoveByWASD();
-        ResolveEnemyOverlap();
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             HandleLeftClick();
         }
+    }
+
+    // NavMeshAgent movement (both the player's and the enemies') is applied after
+    // Update, so the overlap has to be resolved here to be gone before rendering.
+    private void LateUpdate()
+    {
+        if (GameFlowManager.Instance != null && GameFlowManager.Instance.IsPaused) return;
+        if (playerProperty != null && playerProperty.IsDead) return;
+
+        ResolveEnemyOverlap();
     }
 
     // NavMeshAgent.Move ignores avoidance, so nothing stops the player walking into
