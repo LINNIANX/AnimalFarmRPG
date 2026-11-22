@@ -1,30 +1,34 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.EventSystems;
 
 public class PlayerMove : MonoBehaviour
 {
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 6f;
+    [SerializeField] private float turnSpeed = 15f;
+    [SerializeField] private float gravity = -20f;
+
     [Header("Enemy Collision")]
     [SerializeField] private float searchRadius = 2.5f;
     [SerializeField] private float maxPushPerFrame = 0.5f;
 
     private readonly Collider[] overlapHits = new Collider[16];
-    private Collider bodyCollider;
+    private BoxCollider bodyCollider;
 
-    private NavMeshAgent playerAgent;
+    private CharacterController controller;
     private PlayerAttack playerAttack;
     private PlayerProperty playerProperty;
+
+    private float verticalVelocity;
 
     // Start is called before the first frame update
     void Start()
     {
-        playerAgent = GetComponent<NavMeshAgent>();
+        controller = GetComponent<CharacterController>();
         playerAttack = GetComponent<PlayerAttack>();
         playerProperty = GetComponent<PlayerProperty>();
-        playerAgent.updateRotation = false;
-        bodyCollider = GetComponent<Collider>();
+        bodyCollider = GetComponent<BoxCollider>();
     }
 
     // Update is called once per frame
@@ -40,7 +44,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    // NavMeshAgent movement (both the player's and the enemies') is applied after
+    // Enemies still move through NavMeshAgent, whose position is applied after
     // Update, so the overlap has to be resolved here to be gone before rendering.
     private void LateUpdate()
     {
@@ -50,11 +54,11 @@ public class PlayerMove : MonoBehaviour
         ResolveEnemyOverlap();
     }
 
-    // NavMeshAgent.Move ignores avoidance, so nothing stops the player walking into
-    // an enemy's collider; this pushes the player back out by the exact penetration.
+    // CharacterController only resolves overlaps during its own Move, so an enemy
+    // walking into a standing player still has to be pushed out explicitly.
     private void ResolveEnemyOverlap()
     {
-        if (playerAgent == null || !playerAgent.enabled || !playerAgent.isOnNavMesh) return;
+        if (controller == null || !controller.enabled) return;
         if (bodyCollider == null) return;
 
         int count = Physics.OverlapSphereNonAlloc(transform.position, searchRadius,
@@ -77,7 +81,7 @@ public class PlayerMove : MonoBehaviour
                 continue;
             }
 
-            // Keep the correction horizontal so the agent never gets lifted off the ground.
+            // Keep the correction horizontal so the controller never gets lifted off the ground.
             direction.y = 0f;
             float length = direction.magnitude;
             if (length < 0.0001f) continue;
@@ -87,7 +91,7 @@ public class PlayerMove : MonoBehaviour
 
         if (push.sqrMagnitude > 0.000001f)
         {
-            playerAgent.Move(Vector3.ClampMagnitude(push, maxPushPerFrame));
+            controller.Move(Vector3.ClampMagnitude(push, maxPushPerFrame));
         }
     }
 
@@ -103,22 +107,41 @@ public class PlayerMove : MonoBehaviour
 
     private void MoveByWASD()
     {
+        if (controller == null || !controller.enabled) return;
+
         Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        if (input.sqrMagnitude < 0.01f) return;
 
-        Transform cam = Camera.main.transform;
-        Vector3 forward = cam.forward;
-        forward.y = 0;
-        forward.Normalize();
+        // This game has no jump; gravity only keeps the controller stuck to the ground.
+        if (controller.isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = -2f;
+        }
+        else
+        {
+            verticalVelocity += gravity * Time.deltaTime;
+        }
 
-        Vector3 right = cam.right;
-        right.y = 0;
-        right.Normalize();
+        Vector3 velocity = Vector3.up * verticalVelocity;
 
-        Vector3 dir = (forward * input.z + right * input.x).normalized;
-        playerAgent.Move(dir * playerAgent.speed * Time.deltaTime);
-        transform.rotation = Quaternion.Slerp(transform.rotation,
-            Quaternion.LookRotation(dir), 15f * Time.deltaTime);
+        if (input.sqrMagnitude >= 0.01f)
+        {
+            Transform cam = Camera.main.transform;
+            Vector3 forward = cam.forward;
+            forward.y = 0;
+            forward.Normalize();
+
+            Vector3 right = cam.right;
+            right.y = 0;
+            right.Normalize();
+
+            Vector3 dir = (forward * input.z + right * input.x).normalized;
+            velocity += dir * moveSpeed;
+
+            transform.rotation = Quaternion.Slerp(transform.rotation,
+                Quaternion.LookRotation(dir), turnSpeed * Time.deltaTime);
+        }
+
+        controller.Move(velocity * Time.deltaTime);
     }
 
     private void HandleLeftClick()
